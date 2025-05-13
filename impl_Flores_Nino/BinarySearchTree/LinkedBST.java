@@ -1,5 +1,7 @@
 package impl_Flores_Nino.BinarySearchTree;
 
+import java.lang.reflect.Method;
+
 import impl_Flores_Nino.Excepciones.ExceptionIsEmpty;
 import impl_Flores_Nino.Excepciones.ExceptionItemDuplicated;
 import impl_Flores_Nino.Excepciones.ExceptionItemNotFound;
@@ -210,6 +212,62 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
         return rootSub;
     }
 
+    /**
+     * Verifica si el árbol binario de búsqueda está vacío.
+     *
+     * @return {@code true} si el árbol no contiene ningún nodo, {@code false} en caso contrario
+     */
+    @Override
+    public boolean isEmpty() {
+        return this.root == null;
+    }
+
+    //Representación en cadena de texto del arbol
+    @Override
+    public String toString(){
+        return "[ " + this.inOrden(this.root) + "]";
+    }
+
+    //Metodos Privados de uso auxiliar
+
+    //--------------------------Recorridos
+    private StringBuilder inOrden(Node<E> node) {
+        
+        StringBuilder sb = new StringBuilder();
+
+        if (node != null) {
+            sb.append(inOrden(node.getLeft()));         // Subárbol izquierdo
+            sb.append(node.getData()).append(" ");      // Nodo actual
+            sb.append(inOrden(node.getRight()));        // Subárbol derecho
+        }
+        return sb;
+    }
+
+    private StringBuilder preOrden(Node<E> node) {
+        
+        StringBuilder sb = new StringBuilder();
+
+        if (node != null) {
+            sb.append(node.getData()).append(" ");      // Nodo actual
+            sb.append(preOrden(node.getLeft()));         // Subárbol izquierdo
+            sb.append(preOrden(node.getRight()));        // Subárbol derecho
+        }
+        return sb;
+    }
+
+    private StringBuilder postOrden(Node<E> node) {
+        
+        StringBuilder sb = new StringBuilder();
+
+        if (node != null) {
+            sb.append(postOrden(node.getLeft()));         // Subárbol izquierdo
+            sb.append(postOrden(node.getRight()));        // Subárbol derecho
+            sb.append(node.getData()).append(" ");      // Nodo actual
+        }
+        return sb;
+    }
+
+
     //Funciones auxiliares
     //Obtiene el nodo con menor valor en un subarbol
     private Node<E> getNodeMin(Node<E> rootSub) {
@@ -231,15 +289,5 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
         }
 
         return actual;
-    }
-
-    /**
-     * Verifica si el árbol binario de búsqueda está vacío.
-     *
-     * @return {@code true} si el árbol no contiene ningún nodo, {@code false} en caso contrario
-     */
-    @Override
-    public boolean isEmpty() {
-        return this.root == null;
     }
 }
