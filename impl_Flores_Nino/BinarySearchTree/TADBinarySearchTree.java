@@ -12,4 +12,8 @@ public interface TADBinarySearchTree <E> {
     public E search(E data) throws ExceptionItemNotFound;
     public void delete(E data) throws ExceptionIsEmpty;
     public boolean isEmpty();
+    public void destroyNodes() throws ExceptionIsEmpty;
+    public int countAllNodes(); //Nodos no hojas
+    public int height(E subRoot);
+    public int amplitude(E subRoot);
 }
