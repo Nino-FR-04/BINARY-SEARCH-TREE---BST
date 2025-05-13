@@ -1,64 +1,56 @@
 package PruebaBST;
 
-import bstreelinklistinterfgeneric.LinkedBST;
-import exceptions.ExceptionIsEmpty;
 import exceptions.ItemDuplicated;
 import exceptions.ItemNoFound;
+import bstreelinklistinterfgeneric.LinkedBST;
+import exceptions.ExceptionIsEmpty;
 
 public class PruebaBST{
-    public static void main(String[] args) throws ExceptionIsEmpty, ItemNoFound {
+	 public static void main(String[] args) {
         LinkedBST<Integer> arbol = new LinkedBST<>();
 
         try {
-            arbol.insert(40);
-            arbol.insert(20);
-            arbol.insert(60);
-            arbol.insert(10);
-            arbol.insert(30);
+            // Insertar elementos
             arbol.insert(50);
+            arbol.insert(30);
             arbol.insert(70);
-            arbol.insert(15);
-            arbol.insert(41);
-            arbol.insert(9);
+            arbol.insert(20);
+            arbol.insert(40);
+            arbol.insert(60);
+            arbol.insert(80);
 
-            System.out.println("arbol:");
+            // Mostrar árbol
+            System.out.println("Árbol en forma estructurada:");
             arbol.mostrarArbol();
 
-            arbol.mostrarInOrden();
-            arbol.mostrarPreOrden();
-            arbol.mostrarPostOrden();
+            // Recorridos
+            arbol.mostrarInOrden();    // 20 30 40 50 60 70 80
+            arbol.mostrarPreOrden();   // 50 30 20 40 70 60 80
+            arbol.mostrarPostOrden();  // 20 40 30 60 80 70 50
 
-        } catch (ItemDuplicated e) {
-            System.out.println("error: " + e.getMessage());
-        }
-        
-        try {
-            System.out.println("valor min: " + arbol.obtenerMinimo());
-            System.out.println("valor max: " + arbol.obtenerMaximo());
-        } catch (ItemNoFound e) {
-            System.out.println("error al obtener mínimo o máximo: " + e.getMessage());
-        }
-        try {
-            int valorBuscado = 45;
-            System.out.println("¿existe el valor " + valorBuscado + "? " + arbol.search(valorBuscado));
-        } catch (ItemNoFound e) {
-            System.out.println("No se encontró el valor: " + e.getMessage());
-        }
+            // Buscar un elemento
+            System.out.println("Buscar 40: " + arbol.search(40));
 
-        try {
-            int valorEliminar = 40;
-            System.out.println("eliminando valor: " + valorEliminar);
-            arbol.delete(valorEliminar);
+            // Altura del subárbol cuya raíz es 30
+            System.out.println("Altura del subárbol con raíz 30: " + arbol.height(30));
 
-            System.out.println("arbol después de eliminar " + valorEliminar + ":");
+            // Amplitud en nivel 2
+            System.out.println("Nodos en el nivel 1: " + arbol.amplitude(1));
+
+            // Mínimo y máximo
+            System.out.println("Mínimo: " + arbol.obtenerMinimo());
+            System.out.println("Máximo: " + arbol.obtenerMaximo());
+
+            // Contar nodos internos
+            System.out.println("Nodos internos: " + arbol.countNodes());
+
+            // Eliminar nodo
+            arbol.delete(70);
+            System.out.println("Árbol luego de eliminar 70:");
             arbol.mostrarArbol();
 
-            arbol.mostrarInOrden();
-            arbol.mostrarPreOrden();
-            arbol.mostrarPostOrden();
-        } catch (ExceptionIsEmpty e) {
-            System.out.println("error: " + e.getMessage());
+        } catch (ItemDuplicated | ItemNoFound | ExceptionIsEmpty e) {
+            System.err.println("Error: " + e.getMessage());
         }
-
     }
 }
