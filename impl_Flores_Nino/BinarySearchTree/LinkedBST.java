@@ -131,11 +131,106 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
         throw new ExceptionItemNotFound("Item no encontrado");
     }
 
+    /**
+     * Elimina un elemento específico del árbol binario de búsqueda.
+     *
+     * @param data el elemento que se desea eliminar del árbol
+     * @throws ExceptionIsEmpty si el árbol está vacío
+     * @throws ExceptionItemNotFound si el elemento no se encuentra en el árbol
+     */
     @Override
-    public void delete(E data) throws ExceptionIsEmpty {
-        if(this.isEmpty()) throw new ExceptionIsEmpty("Arbol vacio");
+    public void delete(E data) throws ExceptionIsEmpty, ExceptionItemNotFound {
+        if(this.isEmpty()) 
+            throw new ExceptionIsEmpty("Arbol vacio");
 
+        this.root = deleteRecursivo(this.root,data);
+        
 
+        
+    }
+
+    
+    //Metodo auxiliar - Recursivo
+
+    /**
+     * Método auxiliar recursivo que elimina un nodo del árbol binario de búsqueda.
+     *
+     * <p>Busca el nodo con el valor proporcionado y lo elimina siguiendo las reglas del
+     * BST:</p>
+     * <ul>
+     *   <li>Si el nodo es una hoja, simplemente se elimina.</li>
+     *   <li>Si el nodo tiene un solo hijo, se reemplaza por su hijo.</li>
+     *   <li>Si el nodo tiene dos hijos, se reemplaza por el nodo con el menor valor del subárbol derecho
+     *       , y luego se elimina ese sucesor del subárbol derecho.</li>
+     * </ul>
+     *
+     * @param rootSub el nodo raíz del subárbol actual
+     * @param data el valor a eliminar
+     * @return la nueva raíz del subárbol después de la eliminación
+     * @throws ExceptionItemNotFound si el nodo con el valor no se encuentra
+     */
+    private Node<E> deleteRecursivo(Node<E> rootSub,E data) throws ExceptionItemNotFound {
+        if(rootSub == null) 
+            throw new ExceptionItemNotFound("Item no encontrado");
+
+        int cmp = data.compareTo(rootSub.getData());
+
+        if(cmp < 0) {
+            rootSub.setLeft(deleteRecursivo(rootSub.getLeft(), data));
+        }else if(cmp > 0) {
+            rootSub.setRight(deleteRecursivo(rootSub.getRight(), data));
+        }else {
+            //Se encontro el nodo
+
+            //Caso 1: Es un nodo hoja
+            if(rootSub.getLeft() == null && rootSub.getRight() == null) {
+                return null;
+            }
+
+            //Caso 2: Nodo con un solo hijo
+            if(rootSub.getRight() == null) {
+                return rootSub.getLeft();
+            }
+
+            if(rootSub.getLeft() == null) {
+                return rootSub.getRight();
+            }
+
+            //caso 3: Nodo con dos hijos
+
+            Node<E> minSubRight = this.getNodeMin(rootSub.getRight());
+            rootSub.setRight(deleteRecursivo(rootSub.getRight(), minSubRight.getData()));
+            
+            minSubRight.setLeft(rootSub.getLeft());
+            minSubRight.setRight(rootSub.getRight());
+
+            return minSubRight;
+        }
+
+        return rootSub;
+    }
+
+    //Funciones auxiliares
+    //Obtiene el nodo con menor valor en un subarbol
+    private Node<E> getNodeMin(Node<E> rootSub) {
+        Node<E> actual = rootSub;
+
+        while(actual.getLeft() != null) {
+            actual = actual.getLeft();
+        }
+
+        return actual;
+    }
+
+    //Obtiene el nodo con mayor valor en un subarbol
+    private Node<E> getNodeMax(Node<E> rootSub) {
+        Node<E> actual = rootSub;
+
+        while(actual.getRight() != null) {
+            actual = actual.getRight();
+        }
+
+        return actual;
     }
 
     /**
