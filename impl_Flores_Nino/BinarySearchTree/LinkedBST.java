@@ -1,7 +1,5 @@
 package impl_Flores_Nino.BinarySearchTree;
 
-import java.lang.reflect.Method;
-
 import impl_Flores_Nino.Excepciones.ExceptionIsEmpty;
 import impl_Flores_Nino.Excepciones.ExceptionItemDuplicated;
 import impl_Flores_Nino.Excepciones.ExceptionItemNotFound;
@@ -222,6 +220,60 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
         return this.root == null;
     }
 
+    /**
+     * Elimina todos los nodos del árbol binario de búsqueda.
+     * 
+     * <p>Este método destruye todo el árbol asignando {@code null} a la raíz,
+     * lo que permite que el recolector de basura de Java libere la memoria
+     * ocupada por los nodos, siempre que no existan referencias externas a ellos.</p>
+     *
+     * @throws ExceptionIsEmpty si el árbol ya está vacío
+     */
+    @Override
+    public void destroyNodes() throws ExceptionIsEmpty {
+        if(this.isEmpty()) throw new ExceptionIsEmpty("Arbol vacío");
+
+        this.root = null;
+    }
+
+    /**
+     * Cuenta la cantidad de nodos no-hoja (nodos internos) en el árbol binario de búsqueda.
+     *
+     * <p>Un nodo no-hoja es aquel que tiene al menos un hijo. Este método hace uso de una
+     * función auxiliar recursiva para recorrer el árbol y contar sólo los nodos que cumplen
+     * esa condición.</p>
+     *
+     * @return el número total de nodos no-hoja en el árbol
+     */
+    @Override
+    public int countAllNodes() {
+        return countNodes(this.root);
+    }
+
+    //Metodo recursivo para contar los nodos
+    private int countNodes(Node<E> node) {
+        if(node == null || 
+                node.getLeft() == null && node.getRight() == null) {
+            return 0;
+        }
+        return 1 + countNodes(node.getLeft()) + countNodes(node.getRight()); 
+    }
+
+    
+
+    @Override
+    public int height(E subRoot) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'height'");
+    }
+
+    @Override
+    public int amplitude(E subRoot) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'amplitude'");
+    }
+
+
     //Representación en cadena de texto del arbol
     @Override
     public String toString(){
@@ -243,6 +295,7 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
         return sb;
     }
 
+    @SuppressWarnings("unused")
     private StringBuilder preOrden(Node<E> node) {
         
         StringBuilder sb = new StringBuilder();
@@ -255,6 +308,7 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
         return sb;
     }
 
+    @SuppressWarnings("unused")
     private StringBuilder postOrden(Node<E> node) {
         
         StringBuilder sb = new StringBuilder();
@@ -281,6 +335,7 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
     }
 
     //Obtiene el nodo con mayor valor en un subarbol
+    @SuppressWarnings("unused")
     private Node<E> getNodeMax(Node<E> rootSub) {
         Node<E> actual = rootSub;
 
