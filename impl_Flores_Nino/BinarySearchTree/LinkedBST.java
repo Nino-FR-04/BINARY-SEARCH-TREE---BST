@@ -3,12 +3,12 @@ package impl_Flores_Nino.BinarySearchTree;
 import impl_Flores_Nino.Excepciones.ExceptionIsEmpty;
 import impl_Flores_Nino.Excepciones.ExceptionItemDuplicated;
 import impl_Flores_Nino.Excepciones.ExceptionItemNotFound;
-import impl_Flores_Nino.Nodes.Node;
+import impl_Flores_Nino.Nodes.NodeTree;
 
 public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree <E> {
 
     //Atributos
-    private Node<E> root;
+    private NodeTree<E> root;
 
     //Constructor
     public LinkedBST() {
@@ -28,7 +28,7 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
     @Override
     public void insert(E data) throws ExceptionItemDuplicated {
         
-        Node<E> nuevo = new Node<>(data);
+        NodeTree<E> nuevo = new NodeTree<>(data);
         
         //Caso 1: Raiz vacia. Se le asigna un nuevo nodo a la raiz.
         if(this.root == null){
@@ -42,8 +42,8 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
          * Padre: Nodo que sirve para hacer un seguimiento al padre del
          * nodo actual. 
          */
-        Node<E> actual = this.root;
-        Node<E> padre = null;
+        NodeTree<E> actual = this.root;
+        NodeTree<E> padre = null;
 
         while(true) {
             
@@ -104,7 +104,7 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
             throw new ExceptionIsEmpty("El arbol se encuentra vacio");
         
         //Sirve para recorrer el arbol
-        Node<E> actual = this.root;
+        NodeTree<E> actual = this.root;
 
         while(actual != null) {
             
@@ -169,7 +169,7 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
      * @return la nueva raíz del subárbol después de la eliminación
      * @throws ExceptionItemNotFound si el nodo con el valor no se encuentra
      */
-    private Node<E> deleteRecursivo(Node<E> rootSub,E data) throws ExceptionItemNotFound {
+    private NodeTree<E> deleteRecursivo(NodeTree<E> rootSub,E data) throws ExceptionItemNotFound {
         if(rootSub == null) 
             throw new ExceptionItemNotFound("Item no encontrado");
 
@@ -198,7 +198,7 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
 
             //caso 3: Nodo con dos hijos
 
-            Node<E> minSubRight = this.getNodeMin(rootSub.getRight());
+            NodeTree<E> minSubRight = this.getNodeMin(rootSub.getRight());
             rootSub.setRight(deleteRecursivo(rootSub.getRight(), minSubRight.getData()));
             
             minSubRight.setLeft(rootSub.getLeft());
@@ -251,15 +251,13 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
     }
 
     //Metodo recursivo para contar los nodos
-    private int countNodes(Node<E> node) {
+    private int countNodes(NodeTree<E> node) {
         if(node == null || 
                 node.getLeft() == null && node.getRight() == null) {
             return 0;
         }
         return 1 + countNodes(node.getLeft()) + countNodes(node.getRight()); 
     }
-
-    
 
     @Override
     public int height(E subRoot) {
@@ -268,9 +266,10 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
     }
 
     @Override
-    public int amplitude(E subRoot) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'amplitude'");
+    public int amplitude(int level) throws IllegalArgumentException {
+        if(level < 0) throw new IllegalArgumentException("El nivel no puede ser negativo");
+
+        return -1;
     }
 
 
@@ -283,7 +282,7 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
     //Metodos Privados de uso auxiliar
 
     //--------------------------Recorridos
-    private StringBuilder inOrden(Node<E> node) {
+    private StringBuilder inOrden(NodeTree<E> node) {
         
         StringBuilder sb = new StringBuilder();
 
@@ -296,7 +295,7 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
     }
 
     @SuppressWarnings("unused")
-    private StringBuilder preOrden(Node<E> node) {
+    private StringBuilder preOrden(NodeTree<E> node) {
         
         StringBuilder sb = new StringBuilder();
 
@@ -309,7 +308,7 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
     }
 
     @SuppressWarnings("unused")
-    private StringBuilder postOrden(Node<E> node) {
+    private StringBuilder postOrden(NodeTree<E> node) {
         
         StringBuilder sb = new StringBuilder();
 
@@ -324,8 +323,8 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
 
     //Funciones auxiliares
     //Obtiene el nodo con menor valor en un subarbol
-    private Node<E> getNodeMin(Node<E> rootSub) {
-        Node<E> actual = rootSub;
+    private NodeTree<E> getNodeMin(NodeTree<E> rootSub) {
+        NodeTree<E> actual = rootSub;
 
         while(actual.getLeft() != null) {
             actual = actual.getLeft();
@@ -336,8 +335,8 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
 
     //Obtiene el nodo con mayor valor en un subarbol
     @SuppressWarnings("unused")
-    private Node<E> getNodeMax(Node<E> rootSub) {
-        Node<E> actual = rootSub;
+    private NodeTree<E> getNodeMax(NodeTree<E> rootSub) {
+        NodeTree<E> actual = rootSub;
 
         while(actual.getRight() != null) {
             actual = actual.getRight();
