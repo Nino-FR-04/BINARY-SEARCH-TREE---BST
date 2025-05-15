@@ -1,8 +1,10 @@
 package impl_Flores_Nino.BinarySearchTree;
 
+import impl_Flores_Nino.ClasesAuxiliares.QueueLink;
 import impl_Flores_Nino.Excepciones.ExceptionIsEmpty;
 import impl_Flores_Nino.Excepciones.ExceptionItemDuplicated;
 import impl_Flores_Nino.Excepciones.ExceptionItemNotFound;
+import impl_Flores_Nino.Nodes.Node;
 import impl_Flores_Nino.Nodes.NodeTree;
 
 public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree <E> {
@@ -265,13 +267,37 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
         throw new UnsupportedOperationException("Unimplemented method 'height'");
     }
 
+    /**
+     * Calcula la amplitud (cantidad de nodos) en un nivel específico del árbol binario.
+     *
+     * @param level el nivel del árbol cuyo número de nodos se desea calcular (nivel raíz = 0)
+     * @return el número de nodos presentes en el nivel especificado
+     * @throws IllegalArgumentException si el nivel es negativo
+     * @throws ExceptionIsEmpty si el árbol está vacío
+     */
     @Override
-    public int amplitude(int level) throws IllegalArgumentException {
-        if(level < 0) throw new IllegalArgumentException("El nivel no puede ser negativo");
+    public int amplitude(int level) throws IllegalArgumentException, ExceptionIsEmpty {
+        if (level < 0) throw new IllegalArgumentException("El nivel no puede ser negativo");
+        if (this.root == null) throw new ExceptionIsEmpty("El árbol está vacío");
 
-        return -1;
+        return amplitudeRecursivo(this.root, level);
     }
 
+    /**
+     * Método auxiliar recursivo que cuenta cuántos nodos hay en un nivel determinado
+     * a partir de un nodo dado.
+     *
+     * @param nodo  el nodo actual desde el cual se explora el árbol
+     * @param nivel la distancia restante para llegar al nivel objetivo
+     * @return el número de nodos en el nivel especificado a partir de este subárbol
+     */
+    private int amplitudeRecursivo(NodeTree<E> nodo, int nivel) {
+        if (nodo == null) return 0;
+        if (nivel == 0) return 1;
+
+        return amplitudeRecursivo(nodo.getLeft(), nivel - 1) +
+            amplitudeRecursivo(nodo.getRight(), nivel - 1);
+    }
 
     //Representación en cadena de texto del arbol
     @Override

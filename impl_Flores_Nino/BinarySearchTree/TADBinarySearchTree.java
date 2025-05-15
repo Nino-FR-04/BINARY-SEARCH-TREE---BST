@@ -15,5 +15,5 @@ public interface TADBinarySearchTree <E> {
     public void destroyNodes() throws ExceptionIsEmpty;
     public int countAllNodes(); //Nodos no hojas
     public int height(E subRoot);
-    public int amplitude(int level) throws IllegalArgumentException;
+    public int amplitude(int level) throws IllegalArgumentException, ExceptionIsEmpty;
 }
