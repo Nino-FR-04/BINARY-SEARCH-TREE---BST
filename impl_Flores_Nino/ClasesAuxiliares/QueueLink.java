@@ -1,5 +1,8 @@
 package impl_Flores_Nino.ClasesAuxiliares;
 
+import impl_Flores_Nino.Excepciones.*;
+import impl_Flores_Nino.Nodes.Node;
+
 /**
  * Implementación de una cola genérica utilizando una lista enlazada.
  * @param E el tipo de elementos

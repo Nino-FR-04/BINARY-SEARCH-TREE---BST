@@ -4,7 +4,6 @@ import impl_Flores_Nino.ClasesAuxiliares.QueueLink;
 import impl_Flores_Nino.Excepciones.ExceptionIsEmpty;
 import impl_Flores_Nino.Excepciones.ExceptionItemDuplicated;
 import impl_Flores_Nino.Excepciones.ExceptionItemNotFound;
-import impl_Flores_Nino.Nodes.Node;
 import impl_Flores_Nino.Nodes.NodeTree;
 
 public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree <E> {
@@ -131,6 +130,49 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
          * por lo que se lanza la excepcion que corresponde.
          */
         throw new ExceptionItemNotFound("Item no encontrado");
+    }
+
+    /**
+     * Busca y retorna el nodo cuyo dato sea igual al valor especificado.
+     *
+     * <p>Este método recorre el árbol binario de búsqueda de forma iterativa, 
+     * comparando el valor dado con los datos de los nodos para determinar 
+     * si debe avanzar por el subárbol izquierdo o derecho.</p>
+     *
+     * @param data el valor a buscar en el árbol
+     * @return el nodo que contiene el dato especificado, o {@code null} si no se encuentra
+     * @throws ExceptionIsEmpty si el árbol está vacío
+     */
+    private NodeTree<E> searchNode(E data) throws ExceptionIsEmpty {
+        if(this.isEmpty())
+            throw new ExceptionIsEmpty("El arbol se encuentra vacio");
+        
+        //Sirve para recorrer el arbol
+        NodeTree<E> actual = this.root;
+
+        while(actual != null) {
+            
+            if(data.compareTo(actual.getData()) == 0) {
+                return actual;
+            }
+
+            /*
+             * Si la data a buscar es mayor que mi nodo actual (1) se
+             * continua por el lado derecho. Caso contrario se actualiza
+             * actual a su nodo izquierdo.
+             */
+            if(data.compareTo(actual.getData()) > 0) {
+                actual = actual.getRight();
+            }else {
+                actual = actual.getLeft();
+            }
+        }
+
+        /*
+         * Si mi var actual es null se llego al final del recorrido
+         * por lo que se retorna null.
+         */
+        return null;
     }
 
     /**
@@ -261,10 +303,59 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
         return 1 + countNodes(node.getLeft()) + countNodes(node.getRight()); 
     }
 
+    /**
+     * Calcula la altura del subárbol cuya raíz tiene como dato el valor especificado.
+     * <p>
+     * La altura se define como la longitud del camino más largo desde ese nodo hasta una hoja.
+     * El cálculo se realiza de forma iterativa usando recorrido por niveles (BFS).
+     * Si el nodo con el valor especificado no se encuentra en el árbol, se retorna -1.
+     * </p>
+     *
+     * @param subRoot el valor del nodo raíz del subárbol a evaluar.
+     * @return la altura del subárbol, o -1 si no se encuentra el nodo.
+     * @throws ExceptionIsEmpty si el árbol está vacío.
+     */
     @Override
-    public int height(E subRoot) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'height'");
+    public int height(E subRoot) throws ExceptionIsEmpty {
+        if (this.isEmpty()) {
+            throw new ExceptionIsEmpty("El árbol está vacío");
+        }
+
+        NodeTree<E> nodoActual = this.searchNode(subRoot); //Si retorna null, no existe el nodo
+        if (nodoActual == null) {
+            return -1;
+        }
+
+        QueueLink<NodeTree<E>> cola = new QueueLink<>();
+        cola.enqueue(nodoActual);
+        cola.enqueue(null);
+        int altura = -1; 
+
+        while (!cola.isEmpty()) {
+            NodeTree<E> nodo = cola.dequeue();
+
+            if (nodo == null) {
+                altura++; // Fin de un nivel, incrementamos altura
+                if (!cola.isEmpty()) {
+                    cola.enqueue(null); // Agregamos separador para el siguiente nivel
+                }
+                /*
+                 * Asegura que no se ejecute lo que sigue en la iteracion
+                 * evitar un NullPointerException
+                */
+                continue; 
+            }
+
+            if (nodo.getLeft() != null) {
+                cola.enqueue(nodo.getLeft());
+            }
+
+            if (nodo.getRight() != null) {
+                cola.enqueue(nodo.getRight());
+            }
+        }
+
+        return altura;
     }
 
     /**
@@ -299,6 +390,75 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
             amplitudeRecursivo(nodo.getRight(), nivel - 1);
     }
 
+    /**
+     * Calcula el "área" del árbol binario de búsqueda, definida como:
+     * <pre>
+     * área = altura del árbol * cantidad de nodos hoja
+     * </pre>
+     * 
+     * La altura se calcula de forma iterativa desde la raíz del árbol.
+     * 
+     * @return el área del árbol.
+     * @throws ExceptionIsEmpty si el árbol está vacío.
+     */
+    public int areaBST() throws ExceptionIsEmpty {
+        if(this.isEmpty()) {
+            throw new ExceptionIsEmpty("El arbol esta vacio");
+        }
+
+        int altura = this.height(this.root.getData());
+        int numLeafNodes = this.countLeafNodes(this.root);
+
+        return altura * numLeafNodes;
+
+    }
+
+    /**
+     * Cuenta la cantidad de nodos hoja en el subárbol con la raíz dada.
+     * Un nodo hoja es aquel que no tiene hijos izquierdo ni derecho.
+     *
+     * @param node la raíz del subárbol a evaluar.
+     * @return la cantidad total de nodos hoja.
+     */
+    private int countLeafNodes(NodeTree<E> node) {
+
+        QueueLink<NodeTree<E>> cola = new QueueLink<>();
+        cola.enqueue(node);
+
+        int cantidadHojas = 0;
+
+        while (!cola.isEmpty()) {
+            NodeTree<E> nodo = cola.dequeue();
+
+            // Si el nodo es hoja, se incrementa el contador
+            if (isLeaf(nodo)) {
+                cantidadHojas++;
+            }
+
+            // Si tiene hijo izquierdo, se encola
+            if (nodo.getLeft() != null) {
+                cola.enqueue(nodo.getLeft());
+            }
+
+            // Si tiene hijo derecho, se encola
+            if (nodo.getRight() != null) {
+                cola.enqueue(nodo.getRight());
+            }
+        }
+
+        return cantidadHojas;
+    }
+
+    /**
+     * Determina si un nodo es hoja.
+     * 
+     * @param node el nodo a evaluar.
+     * @return true si el nodo no tiene hijos, false en caso contrario.
+     */
+    private boolean isLeaf(NodeTree<E> node) {
+        return node.getLeft() == null && node.getRight() == null;
+    } 
+
     //Representación en cadena de texto del arbol
     @Override
     public String toString(){
@@ -306,7 +466,6 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
     }
 
     //Metodos Privados de uso auxiliar
-
     //--------------------------Recorridos
     private StringBuilder inOrden(NodeTree<E> node) {
         
@@ -345,7 +504,6 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
         }
         return sb;
     }
-
 
     //Funciones auxiliares
     //Obtiene el nodo con menor valor en un subarbol
