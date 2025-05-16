@@ -361,33 +361,62 @@ public class LinkedBST <E extends Comparable<E>> implements TADBinarySearchTree 
     /**
      * Calcula la amplitud (cantidad de nodos) en un nivel específico del árbol binario.
      *
-     * @param level el nivel del árbol cuyo número de nodos se desea calcular (nivel raíz = 0)
+     * @param level el nivel del árbol cuyo número de nodos se desea calcular
      * @return el número de nodos presentes en el nivel especificado
      * @throws IllegalArgumentException si el nivel es negativo
      * @throws ExceptionIsEmpty si el árbol está vacío
      */
     @Override
     public int amplitude(int level) throws IllegalArgumentException, ExceptionIsEmpty {
-        if (level < 0) throw new IllegalArgumentException("El nivel no puede ser negativo");
-        if (this.root == null) throw new ExceptionIsEmpty("El árbol está vacío");
+        
+        if (this.isEmpty()) {
+            throw new ExceptionIsEmpty("El árbol está vacío");
+        }
 
-        return amplitudeRecursivo(this.root, level);
-    }
+        if(level < 0) {
+            throw new IllegalArgumentException("El nivel no puede ser negativo");
+        }
 
-    /**
-     * Método auxiliar recursivo que cuenta cuántos nodos hay en un nivel determinado
-     * a partir de un nodo dado.
-     *
-     * @param nodo  el nodo actual desde el cual se explora el árbol
-     * @param nivel la distancia restante para llegar al nivel objetivo
-     * @return el número de nodos en el nivel especificado a partir de este subárbol
-     */
-    private int amplitudeRecursivo(NodeTree<E> nodo, int nivel) {
-        if (nodo == null) return 0;
-        if (nivel == 0) return 1;
+        QueueLink<NodeTree<E>> cola = new QueueLink<>();
+        cola.enqueue(this.root);
+        cola.enqueue(null);
+        int nivelActual = 0;
+        int cantNodes = 0;
 
-        return amplitudeRecursivo(nodo.getLeft(), nivel - 1) +
-            amplitudeRecursivo(nodo.getRight(), nivel - 1);
+        while (!cola.isEmpty()) {
+
+            NodeTree<E> nodo = cola.dequeue();
+
+            if (nodo == null) {
+                nivelActual++; // Fin de un nivel, incrementamos altura
+                
+                // Si ya se supero el nivel deseado o no hay más nodos, se sale del bucle
+                if (nivelActual > level || cola.isEmpty()) {
+                    break;
+                }
+
+                cola.enqueue(null); // Agregamos separador para el siguiente nivel
+                /*
+                 * Asegura que no se ejecute lo que sigue en la iteracion sirve
+                 * para evitar un NullPointerException.
+                */
+                continue; 
+            }
+
+            // Si estamos en el nivel que buscamos, se incrementa el contador de nodos
+            if(nivelActual == level) cantNodes++;
+
+            if (nodo.getLeft() != null) {
+                cola.enqueue(nodo.getLeft());
+            }
+
+            if (nodo.getRight() != null) {
+                cola.enqueue(nodo.getRight());
+            }
+
+        }
+
+        return cantNodes;
     }
 
     /**
